@@ -24,6 +24,29 @@ ln -s /home/LogFiles "$PM2HOME"/logs
 # Get environment variables to show up in SSH session
 eval $(printenv | awk -F= '{print "export " $1"="$2 }' >> /etc/profile)
 
+#
+# Extract dependencies if required:
+#
+if [ -f "oryx-manifest.toml" ] && [ ! "$APPSVC_RUN_ZIP" = "TRUE" ] ; then
+    echo "Found 'oryx-manifest.toml', checking if node_modules was compressed..."
+    source "oryx-manifest.toml"
+    if [ ${compressedNodeModulesFile: -4} == ".zip" ]; then
+        echo "Found zip-based node_modules."
+        extractionCommand="unzip -q $compressedNodeModulesFile -d /node_modules"
+    elif [ ${compressedNodeModulesFile: -7} == ".tar.gz" ]; then
+        echo "Found tar.gz based node_modules."
+        extractionCommand="tar -xzf $compressedNodeModulesFile -C /node_modules"
+    fi
+    if [ ! -z "$extractionCommand" ]; then
+        echo "Removing existing modules directory..."
+        rm -fr /node_modules
+        mkdir -p /node_modules
+        echo "Extracting modules..."
+        $extractionCommand
+    fi
+    echo "Done."
+fi
+
 echo "$@" > /opt/startup/startupCommand
 node /opt/startup/generateStartupCommand.js
 
