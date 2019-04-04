@@ -2,7 +2,7 @@ FROM oryxprod/node-8.1:20190401.5
 
 LABEL maintainer="Azure App Services Container Images <appsvc-images@microsoft.com>"
 
-RUN  echo "deb http://deb.debian.org/debian/ jessie main" >> /etc/apt/sources.list \
+RUN  echo "deb http://deb.debian.org/debian/ jessie main" > /etc/apt/sources.list \
   && echo "deb-src http://deb.debian.org/debian/ jessie main" >> /etc/apt/sources.list \
   && echo "deb http://security.debian.org/ jessie/updates main" >> /etc/apt/sources.list \
   && echo "deb-src http://security.debian.org/ jessie/updates main" >> /etc/apt/sources.list \
